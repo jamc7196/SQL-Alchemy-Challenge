@@ -11,8 +11,8 @@ from sqlalchemy import create_engine, func
 from flask import Flask, jsonify
 
 #1)Setup database using Engine and autobase
-engine = create_engine("sqlite:///Resources/hawaii.sqlite", connect_args={'check_same_thread': False}, echo=True)
-#conn =engine.connect
+engine = create_engine("sqlite:///Resources/hawaii.sqlite")
+conn =engine.connect
 Base = automap_base()
 Base.prepare(engine, reflect=True)
 #2)Get the index variables from the Base and create a session
@@ -92,15 +92,15 @@ def tobs():
 @app.route('/api/v1.0/<start>')
 def get_temp_start(start):
     session = Session(engine)
+    temp_obs_fd = []
     start_date_results = session.query(func.min(Measurements.tobs), func.avg(Measurements.tobs), func.max(Measurements.tobs)).filter(Measurements.date >= start).all()
     session.close()
-    temp_obs_fd = []
     for min, avg, max in start_date_results:
-        tobs_dict = {}
-        tobs_dict["Minimum"] = min
-        tobs_dict["Average"] = avg
-        tobs_dict["Maximum"] = max
-        temp_obs_fd.append(tobs_dict)
+        tobs_dict1 = {}
+        tobs_dict1["Minimum"] = min
+        tobs_dict1["Average"] = avg
+        tobs_dict1["Maximum"] = max
+        temp_obs_fd.append(tobs_dict1)
     return jsonify(temp_obs_fd)
 #Sixth route: Temperature Stats from the Start Date
 @app.route('/api/v1.0/<start>/<stop>')
