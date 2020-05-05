@@ -1,5 +1,6 @@
 #Student: Jorge Alberto Muñozcano Castro
 #SQL ALCHEMY
+
 import datetime as dt
 import numpy as np
 import pandas as pd
@@ -8,9 +9,10 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
 from flask import Flask, jsonify
+
 #1)Setup database using Engine and autobase
-engine = create_engine("sqlite:///hawaii.sqlite")
-conn =engine.connect
+engine = create_engine("sqlite:///Resources/hawaii.sqlite", connect_args={'check_same_thread': False}, echo=True)
+#conn =engine.connect
 Base = automap_base()
 Base.prepare(engine, reflect=True)
 #2)Get the index variables from the Base and create a session
@@ -19,6 +21,7 @@ Stations = Base.classes.station
 session = Session(engine)
 #3)Setup Flask
 app = Flask(__name__)
+
 #4)Setup Flask routes
 #First route main menu route
 @app.route("/")
@@ -87,34 +90,33 @@ def tobs():
     return jsonify(temp_obs)
 #Fifth route: Temperature Stats from the Start Date
 @app.route('/api/v1.0/<start>')
-def get_t_start(start):
+def get_temp_start(start):
     session = Session(engine)
-    start_date_results = session.query(func.min(Measurements.tobs), func.avg(Measurements.tobs), func.max(Measurements.tobs)).\
-        filter(Measurements.date >= start).all()
+    start_date_results = session.query(func.min(Measurements.tobs), func.avg(Measurements.tobs), func.max(Measurements.tobs)).filter(Measurements.date >= start).all()
     session.close()
     temp_obs_fd = []
-    for min,avg,max in start_date_results:
+    for min, avg, max in start_date_results:
         tobs_dict = {}
-        tobs_dict["Min"] = min
+        tobs_dict["Minimum"] = min
         tobs_dict["Average"] = avg
-        tobs_dict["Max"] = max
+        tobs_dict["Maximum"] = max
         temp_obs_fd.append(tobs_dict)
     return jsonify(temp_obs_fd)
 #Sixth route: Temperature Stats from the Start Date
 @app.route('/api/v1.0/<start>/<stop>')
-def get_t_start_stop(start,stop):
+def get_temp_start_stop(start,stop):
     session = Session(engine)
-    last_date_results= session.query(func.min(Measurements.tobs), func.avg(Measurements.tobs), func.max(Measurements.tobs)).\
-        filter(Measurements.date >= start).filter(Measurements.date <= stop).all()
+    last_date_results= session.query(func.min(Measurements.tobs), func.avg(Measurements.tobs), func.max(Measurements.tobs)).filter(Measurements.date >= start).filter(Measurements.date <= stop).all()
     session.close()
     temp_obs_ld = []
     for min,avg,max in last_date_results:
         tobs_dict = {}
-        tobs_dict["Min"] = min
+        tobs_dict["Minimum"] = min
         tobs_dict["Average"] = avg
-        tobs_dict["Max"] = max
+        tobs_dict["Maximum"] = max
         temp_obs_ld.append(tobs_dict)
     return jsonify(temp_obs_ld)
+
 #5)Generate Flask
 if __name__ == "__main__":
     app.run(debug=True)
