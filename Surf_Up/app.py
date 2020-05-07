@@ -102,6 +102,7 @@ def get_temp_start(start_date):
         tobs_dict1["Maximum"] = max
         temp_obs_fd.append(tobs_dict1)
     return jsonify(temp_obs_fd)
+
 #Sixth route: Temperature Stats from the Start Date
 @app.route('/api/v1.0/<start_date>/<end_date>')
 def get_temp_start_stop(start_date,end_date):
