@@ -89,12 +89,12 @@ def tobs():
         temp_obs.append(tobs_dict)
     return jsonify(temp_obs)
 #Fifth route: Temperature Stats from the Start Date
-@app.route('/api/v1.0/<start>')
-def get_temp_start(start):
+@app.route('/api/v1.0/<start_date>')
+def get_temp_start(start_date):
     session = Session(engine)
-    temp_obs_fd = []
-    start_date_results = session.query(func.min(Measurements.tobs), func.avg(Measurements.tobs), func.max(Measurements.tobs)).filter(Measurements.date >= start).all()
+    start_date_results = session.query(func.min(Measurements.tobs), func.avg(Measurements.tobs), func.max(Measurements.tobs)).filter(Measurements.date >= start_date).all()
     session.close()
+    temp_obs_fd = []
     for min, avg, max in start_date_results:
         tobs_dict1 = {}
         tobs_dict1["Minimum"] = min
@@ -103,18 +103,18 @@ def get_temp_start(start):
         temp_obs_fd.append(tobs_dict1)
     return jsonify(temp_obs_fd)
 #Sixth route: Temperature Stats from the Start Date
-@app.route('/api/v1.0/<start>/<stop>')
-def get_temp_start_stop(start,stop):
+@app.route('/api/v1.0/<start_date>/<end_date>')
+def get_temp_start_stop(start_date,end_date):
     session = Session(engine)
-    last_date_results= session.query(func.min(Measurements.tobs), func.avg(Measurements.tobs), func.max(Measurements.tobs)).filter(Measurements.date >= start).filter(Measurements.date <= stop).all()
+    last_date_results= session.query(func.min(Measurements.tobs), func.avg(Measurements.tobs), func.max(Measurements.tobs)).filter(Measurements.date >= start_date).filter(Measurements.date <= end_date).all()
     session.close()
     temp_obs_ld = []
     for min,avg,max in last_date_results:
-        tobs_dict = {}
-        tobs_dict["Minimum"] = min
-        tobs_dict["Average"] = avg
-        tobs_dict["Maximum"] = max
-        temp_obs_ld.append(tobs_dict)
+        tobs_dict2 = {}
+        tobs_dict2["Minimum"] = min
+        tobs_dict2["Average"] = avg
+        tobs_dict2["Maximum"] = max
+        temp_obs_ld.append(tobs_dict2)
     return jsonify(temp_obs_ld)
 
 #5)Generate Flask
