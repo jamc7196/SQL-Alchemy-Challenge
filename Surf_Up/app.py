@@ -88,7 +88,7 @@ def tobs():
         tobs_dict["Tobs"] = tobs
         temp_obs.append(tobs_dict)
     return jsonify(temp_obs)
-#Fifth route: Temperature Stats from the Start Date
+#Fifth route: Temperature Stats from the Start Date result null need to fixed
 @app.route('/api/v1.0/<start_date>')
 def get_temp_start(start_date):
     session = Session(engine)
@@ -103,7 +103,7 @@ def get_temp_start(start_date):
         temp_obs_fd.append(tobs_dict1)
     return jsonify(temp_obs_fd)
 
-#Sixth route: Temperature Stats from the Start Date
+#Sixth route: Temperature Stats from the Start Date, result null need to fixed
 @app.route('/api/v1.0/<start_date>/<end_date>')
 def get_temp_start_stop(start_date,end_date):
     session = Session(engine)
